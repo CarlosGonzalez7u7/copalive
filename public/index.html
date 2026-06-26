@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CopaLive - Resultados en Tiempo Real</title>
+    <style>
+      :root {
+        --color-primario: #0d1b2a;
+        --color-secundario: #e0e1dd;
+        --color-acento: #e63946;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+      header {
+        background-color: var(--color-primario);
+        color: white;
+        padding: 20px;
+        text-align: center;
+      }
+      .contenedor {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 0 20px;
+      }
+
+      /* Grid para las tarjetas de los Grupos */
+      .grid-grupos {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .tarjeta-grupo {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .tarjeta-grupo h3 {
+        background-color: var(--color-primario);
+        color: white;
+        margin: 0;
+        padding: 10px;
+        text-align: center;
+        font-size: 1.2rem;
+      }
+
+      .tabla-posiciones {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .tabla-posiciones th,
+      .tabla-posiciones td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+      }
+      .tabla-posiciones th {
+        background-color: #f1faee;
+        font-size: 0.9rem;
+        color: #555;
+      }
+      .equipo-fila {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+      }
+      .bandera-mini {
+        width: 24px;
+        height: 16px;
+        object-fit: cover;
+        border-radius: 2px;
+        border: 1px solid #ccc;
+      }
+
+      /* Zona de Partidos */
+      .seccion-partidos {
+        margin-top: 40px;
+      }
+      .partido-card {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .fecha-partido {
+        font-size: 0.8rem;
+        color: #777;
+        text-align: center;
+        width: 100%;
+        display: block;
+        margin-bottom: 10px;
+      }
+      .marcador {
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 0 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>🏆 CopaLive</h1>
+      <p>Resultados y Posiciones en Tiempo Real</p>
+    </header>
+
+    <div class="contenedor">
+      <h2>Fase de Grupos</h2>
+      <div class="grid-grupos" id="contenedorGrupos">
+        <div class="tarjeta-grupo">
+          <h3>Grupo A</h3>
+          <table class="tabla-posiciones">
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>Pts</th>
+                <th>PJ</th>
+                <th>DG</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="equipo-fila">
+                    <img
+                      src="https://flagcdn.com/w40/mx.png"
+                      class="bandera-mini"
+                      alt="México"
+                    />
+                    México
+                  </div>
+                </td>
+                <td><strong>0</strong></td>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="seccion-partidos">
+        <h2>Próximos Partidos</h2>
+        <div class="partido-card">
+          <div>
+            <span class="fecha-partido">11 de Junio, 2026 - 17:00 HRS</span>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 20px;
+              "
+            >
+              <span style="display: flex; align-items: center; gap: 8px"
+                ><img
+                  src="https://flagcdn.com/w40/mx.png"
+                  class="bandera-mini"
+                />
+                México</span
+              >
+              <span class="marcador">vs</span>
+              <span style="display: flex; align-items: center; gap: 8px"
+                >Canadá
+                <img src="https://flagcdn.com/w40/ca.png" class="bandera-mini"
+              /></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

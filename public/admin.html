@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Administración - CopaLive</title>
+    <style>
+      /* (Se mantienen los mismos estilos de la versión anterior) */
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f7f6;
+        margin: 0;
+        color: #333;
+      }
+      header {
+        background-color: #0d1b2a;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+      .contenedor {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 20px;
+      }
+
+      .tarjeta-dashboard {
+        background: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .tarjeta-dashboard h2 {
+        color: #1d3557;
+        font-size: 2rem;
+        margin-bottom: 5px;
+      }
+      .tarjeta-dashboard p {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .btn-principal {
+        background: #e63946;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 1.1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 20px;
+        transition: 0.3s;
+      }
+      .btn-principal:hover {
+        background: #d62828;
+      }
+      .btn-secundario {
+        background: #1d3557;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        font-size: 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+        transition: 0.3s;
+      }
+      .btn-secundario:hover {
+        background: #112233;
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(3px);
+        overflow-y: auto;
+      }
+      .modal-content {
+        background-color: white;
+        margin: 5% auto;
+        padding: 30px;
+        border-radius: 8px;
+        width: 95%;
+        max-width: 800px;
+        position: relative;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+      .close-btn {
+        color: #aaa;
+        position: absolute;
+        right: 20px;
+        top: 15px;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+        font-size: 0.9rem;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      .mensaje {
+        margin-top: 15px;
+        padding: 12px;
+        display: none;
+        border-radius: 4px;
+        text-align: center;
+        font-weight: bold;
+      }
+      .exito {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      /* Estilos de la Vista Previa de la Imagen */
+      .preview-box {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        background: #f8f9fa;
+        padding: 10px;
+        border: 1px dashed #ccc;
+        border-radius: 4px;
+      }
+      .preview-img {
+        width: 60px;
+        height: 40px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        display: none;
+      }
+
+      /* Estilos de la Tabla Clasificación */
+      .clasificacion-container {
+        background: #f1efec;
+        border-radius: 16px;
+        padding: 20px;
+        margin-top: 30px;
+      }
+      .clasificacion-container h3 {
+        margin-top: 0;
+        color: #1f1f1f;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.1rem;
+      }
+      .tabs-grupos {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+      }
+      .tab-grupo {
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        font-weight: 600;
+        color: #5f6368;
+        font-size: 0.95rem;
+        white-space: nowrap;
+        transition: 0.2s;
+      }
+      .tab-grupo:hover {
+        background: #e8eaed;
+      }
+      .tab-grupo.activo {
+        background: #d3e3fd;
+        color: #001d35;
+      }
+
+      .tabla-clasificacion {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: center;
+        font-size: 0.9rem;
+        color: #202124;
+      }
+      .tabla-clasificacion th,
+      .tabla-clasificacion td {
+        padding: 12px 5px;
+        border-bottom: 1px solid #dadce0;
+      }
+      .tabla-clasificacion th {
+        font-weight: normal;
+        color: #5f6368;
+      }
+      .tabla-clasificacion tr.clasificado td {
+        background-color: #d3e3fd;
+      }
+      .tabla-clasificacion tr.clasificado td:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+      }
+      .tabla-clasificacion tr.clasificado td:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+      }
+
+      .equipo-col {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-align: left;
+        font-weight: bold;
+      }
+      /* ESTA CLASE ASEGURA QUE LA BANDERA SE AUTOAJUSTE PERFECTO EN LA TABLA */
+      .bandera-img {
+        width: 24px;
+        height: 16px;
+        object-fit: cover;
+        border-radius: 2px;
+        border: 1px solid #ccc;
+      }
+      .pts-col {
+        font-weight: bold;
+        font-size: 1rem;
+      }
+      .ultimos-5 {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+      }
+      .icono-estado {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: white;
+        background: #bdc1c6;
+      }
+      /* Estilos para la Vista de Administración */
+      .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .admin-header h2 {
+        color: #1d3557;
+        margin: 0;
+      }
+      .admin-actions {
+        display: flex;
+        gap: 10px;
+      }
+      .admin-actions .btn-principal,
+      .admin-actions .btn-secundario {
+        margin: 0;
+      }
+
+      .contenedor-arrastre {
+        display: flex;
+        gap: 20px;
+      }
+      .columna-arrastre {
+        flex: 1;
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 8px;
+        min-height: 400px;
+      }
+      #columna-grupos {
+        flex: 2;
+      }
+      .lista-equipos {
+        min-height: 100px;
+        border: 1px dashed #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        height: 100%;
+      }
+      .grupos-wrapper {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      /* Estilos para Drag and Drop */
+      .equipo-item {
+        display: flex;
+        align-items: center;
+        padding: 8px;
+        background: #fff;
+        border: 1px solid #ddd;
+        margin-bottom: 5px;
+        border-radius: 4px;
+        cursor: grab;
+      }
+      .equipo-item:active {
+        cursor: grabbing;
+      }
+      .equipo-item img {
+        width: 30px;
+        height: 20px;
+        margin-right: 10px;
+        object-fit: cover;
+        border: 1px solid #eee;
+      }
+      .grupo-contenedor {
+        margin-bottom: 20px;
+        background: #fff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
+      .grupo-contenedor h4 {
+        margin: 0 0 10px 0;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      .sortable-ghost {
+        opacity: 0.4;
+        background: #c8ebfb;
+      }
+      /* Estilos para el selector de tipo de bandera */
+      .radio-toggle {
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 5px;
+      }
+      .radio-toggle input[type="radio"] {
+        display: none; /* Ocultamos el radio button real */
+      }
+      .radio-toggle label {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        margin: 0;
+        cursor: pointer;
+        background: #f0f0f0;
+        color: #555;
+        transition: background 0.3s;
+        font-weight: normal; /* Reseteamos el bold por defecto */
+      }
+      .radio-toggle input[type="radio"]:checked + label {
+        background: #457b9d;
+        color: white;
+        font-weight: bold;
+      }
+      /* Estilos para Notificaciones Toast */
+      #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .toast {
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      .toast.success {
+        background-color: #2a9d8f;
+      }
+      .toast.error {
+        background-color: #e63946;
+      }
+      .toast.info {
+        background-color: #457b9d;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Contenedor para las notificaciones personalizadas -->
+    <div id="toast-container"></div>
+
+    <header>
+      <h1>⚙️ Admin - CopaLive</h1>
+      <button
+        class="btn-principal"
+        style="margin: 0; padding: 8px 16px; font-size: 0.9rem"
+        onclick="abrirModalNuevoTorneo()"
+      >
+        + Nuevo Torneo
+      </button>
+    </header>
+
+    <div class="contenedor">
+      <div class="tarjeta-dashboard" id="panelResumen">
+        <h2 id="tituloTorneoActual">Cargando...</h2>
+        <p id="detallesTorneoActual">Conectando con la base de datos</p>
+
+        <button
+          id="btnAdministrarTorneo"
+          class="btn-secundario"
+          style="display: none; max-width: 300px; margin: 20px auto 0"
+        >
+          ⚙️ Administrar Torneo
+        </button>
+      </div>
+    </div>
+
+    <!-- Vista de Administración de Equipos (Drag & Drop) -->
+    <div
+      id="vistaAdministracionEquipos"
+      style="display: none; padding: 20px; max-width: 1200px; margin: auto"
+    >
+      <div class="admin-header">
+        <h2 id="tituloTorneoAdmin"></h2>
+        <div class="admin-actions">
+          <button
+            id="btnCrearEquipoModal"
+            class="btn-principal"
+            style="margin: 0; background-color: #2a9d8f"
+          >
+            + Crear Equipo
+          </button>
+          <button
+            id="btnGuardarCambios"
+            class="btn-principal"
+            style="display: none; background-color: #2a9d8f"
+          >
+            Guardar Cambios
+          </button>
+          <button
+            id="btnAnadirGrupo"
+            class="btn-secundario"
+            style="background-color: #457b9d"
+          >
+            + Añadir Grupo
+          </button>
+          <button
+            id="btnFinalizarAdmin"
+            class="btn-secundario"
+            style="background-color: #e63946"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+
+      <div class="contenedor-arrastre">
+        <!-- Columna Izquierda: Equipos sin grupo -->
+        <div class="columna-arrastre">
+          <h3>Equipos sin Asignar</h3>
+          <div id="lista-equipos-sin-grupo" class="lista-equipos">
+            <!-- Los equipos se renderizarán aquí con JS -->
+          </div>
+        </div>
+
+        <!-- Columna Derecha: Grupos -->
+        <div class="columna-arrastre" id="columna-grupos">
+          <h3>Grupos del Torneo</h3>
+          <div id="contenedor-grupos" class="grupos-wrapper">
+            <!-- Los grupos se renderizarán aquí con JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="miModal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn" onclick="cerrarModalNuevoTorneo()"
+          >&times;</span
+        >
+
+        <div id="contenidoCrearTorneo">
+          <h2 style="margin-top: 0; color: #1d3557">
+            1. Configurar Nuevo Torneo
+          </h2>
+          <form id="formTorneo">
+            <label>Nombre del Torneo:</label>
+            <input type="text" id="nombreTorneo" required />
+            <label>Temporada / Año:</label>
+            <select id="anoTorneo" required></select>
+            <label>Tipo:</label>
+            <select id="tipoTorneo" required>
+              <option value="selecciones">Selecciones</option>
+              <option value="clubes">Clubes</option>
+            </select>
+            <button type="submit" class="btn-secundario">
+              Crear Torneo y Continuar ➔
+            </button>
+            <div id="msgTorneo" class="mensaje"></div>
+          </form>
+        </div>
+
+        <div id="contenidoCrearEquipo" style="display: none">
+          <h2 style="margin-top: 0; color: #1d3557">Crear Nuevo Equipo</h2>
+
+          <form id="formEquipoExpress">
+            <label>Nombre del Equipo:</label>
+            <input
+              type="text"
+              id="nombreEquipo"
+              placeholder="Ej: México"
+              required
+            />
+            <label>Bandera del Equipo:</label>
+            <div class="radio-toggle">
+              <input
+                type="radio"
+                id="tipo_bandera_url"
+                name="tipo_bandera"
+                value="url"
+                checked
+              />
+              <label for="tipo_bandera_url">Desde URL</label>
+              <input
+                type="radio"
+                id="tipo_bandera_archivo"
+                name="tipo_bandera"
+                value="archivo"
+              />
+              <label for="tipo_bandera_archivo">Subir Archivo</label>
+            </div>
+            <div id="input-url-bandera">
+              <label for="urlBandera">URL de la imagen:</label>
+              <input
+                type="url"
+                id="urlBandera"
+                placeholder="https://ejemplo.com/bandera.png"
+              />
+            </div>
+            <div id="input-archivo-bandera" style="display: none">
+              <label for="archivoBandera">Seleccionar archivo:</label>
+              <input
+                type="file"
+                id="archivoBandera"
+                accept="image/png, image/jpeg, image/webp, image/svg+xml"
+              />
+            </div>
+            <div class="preview-box">
+              <img id="imgPreview" class="preview-img" alt="Vista previa" />
+              <span>Vista previa</span>
+            </div>
+            <button
+              type="submit"
+              class="btn-secundario"
+              style="background: #2a9d8f; margin-top: 20px"
+            >
+              + Crear Equipo
+            </button>
+            <div id="msgEquipo" class="mensaje"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para Añadir Grupo -->
+    <div id="modalAnadirGrupo" class="modal">
+      <div class="modal-content" style="max-width: 400px">
+        <span class="close-btn">&times;</span>
+        <h2 style="margin-top: 0; color: #1d3557">Añadir Nuevo Grupo</h2>
+        <form id="formAnadirGrupo">
+          <label for="letraNuevoGrupo">Letra del Grupo:</label>
+          <input
+            type="text"
+            id="letraNuevoGrupo"
+            required
+            maxlength="1"
+            style="
+              text-transform: uppercase;
+              text-align: center;
+              font-size: 1.5rem;
+            "
+          />
+          <button type="submit" class="btn-secundario">Añadir Grupo</button>
+          <div id="msgGrupo" class="mensaje"></div>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="js/admin.js"></script>
+  </body>
+</html>
